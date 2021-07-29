@@ -2,8 +2,10 @@ package product_api
 
 import (
 	"crud-restfull-api-1/app/config"
+	"crud-restfull-api-1/app/entities"
 	"crud-restfull-api-1/app/help"
 	"crud-restfull-api-1/app/models"
+	"encoding/json"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -47,4 +49,30 @@ func FindById(w http.ResponseWriter, r *http.Request) {
 	}
 
 	help.ResponseWithJson(w, http.StatusOK, product)
+}
+
+func Create(w http.ResponseWriter, r *http.Request) {
+
+	var product entities.Product
+
+	err := json.NewDecoder(r.Body).Decode(&product)
+	if err != nil {
+		help.ResponseWithError(w, http.StatusInternalServerError, err.Error())
+	}
+
+	db, err := config.GetDB()
+	if err != nil {
+		help.ResponseWithError(w, http.StatusInternalServerError, err.Error())
+	}
+
+	productModel := models.ProductModel{
+		Db: db,
+	}
+
+	err = productModel.Create(&product)
+	if err != nil {
+		help.ResponseWithError(w, http.StatusInternalServerError, err.Error())
+	}
+
+	help.ResponseWithJson(w, http.StatusCreated, product)
 }

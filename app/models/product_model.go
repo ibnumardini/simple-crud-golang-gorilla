@@ -74,3 +74,16 @@ func (productModel ProductModel) FindById(id string) (products []entities.Produc
 
 	return products, nil
 }
+
+func (productModel ProductModel) Create(product *entities.Product) (err error) {
+
+	rows, err := productModel.Db.Exec("INSERT INTO products(name, price, quantity) VALUES(?, ?, ?)", product.Name, product.Price, product.Quantity)
+
+	if err != nil {
+		return err
+	}
+
+	product.Id, _ = rows.LastInsertId()
+
+	return nil
+}
