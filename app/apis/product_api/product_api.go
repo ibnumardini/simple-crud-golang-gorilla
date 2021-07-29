@@ -13,6 +13,7 @@ import (
 )
 
 func FindAll(w http.ResponseWriter, r *http.Request) {
+
 	db, err := config.GetDB()
 	if err != nil {
 		help.ResponseWithError(w, http.StatusInternalServerError, err.Error())
