@@ -98,3 +98,16 @@ func (productModel ProductModel) Update(product *entities.Product) (err error) {
 
 	return nil
 }
+
+func (productModel ProductModel) Delete(id string) (queryAff int64, err error) {
+
+	result, err := productModel.Db.Exec("DELETE FROM products WHERE id = ?", id)
+
+	if err != nil {
+		return 0, err
+	}
+
+	queryAff, _ = result.RowsAffected()
+
+	return queryAff, nil
+}
