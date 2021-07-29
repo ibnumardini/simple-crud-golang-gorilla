@@ -87,3 +87,14 @@ func (productModel ProductModel) Create(product *entities.Product) (err error) {
 
 	return nil
 }
+
+func (productModel ProductModel) Update(product *entities.Product) (err error) {
+
+	_, err = productModel.Db.Exec("UPDATE products SET name = ?, price = ?, quantity = ? WHERE id = ?", product.Name, product.Price, product.Quantity, product.Id)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

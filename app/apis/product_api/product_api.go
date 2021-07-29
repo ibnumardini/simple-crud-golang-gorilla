@@ -7,6 +7,7 @@ import (
 	"crud-restfull-api-1/app/models"
 	"encoding/json"
 	"net/http"
+	"strconv"
 
 	"github.com/gorilla/mux"
 )
@@ -70,6 +71,37 @@ func Create(w http.ResponseWriter, r *http.Request) {
 	}
 
 	err = productModel.Create(&product)
+	if err != nil {
+		help.ResponseWithError(w, http.StatusInternalServerError, err.Error())
+	}
+
+	help.ResponseWithJson(w, http.StatusCreated, product)
+}
+
+func Update(w http.ResponseWriter, r *http.Request) {
+
+	vars := mux.Vars(r)
+	id := vars["id"]
+
+	var product entities.Product
+
+	product.Id, _ = strconv.ParseInt(id, 10, 64)
+
+	err := json.NewDecoder(r.Body).Decode(&product)
+	if err != nil {
+		help.ResponseWithError(w, http.StatusInternalServerError, err.Error())
+	}
+
+	db, err := config.GetDB()
+	if err != nil {
+		help.ResponseWithError(w, http.StatusInternalServerError, err.Error())
+	}
+
+	productModel := models.ProductModel{
+		Db: db,
+	}
+
+	err = productModel.Update(&product)
 	if err != nil {
 		help.ResponseWithError(w, http.StatusInternalServerError, err.Error())
 	}
